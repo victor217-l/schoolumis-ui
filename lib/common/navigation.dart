@@ -10,10 +10,16 @@ import 'package:schoolumis/features/student/commenceregistration.dart';
 import 'package:schoolumis/features/student/dashboardstudent.dart';
 import 'package:schoolumis/features/student/login.dart';
 import 'package:schoolumis/features/student/worshipcentre.dart';
+import 'package:schoolumis/features/superadmin/seeallvi/allhallss.dart';
+import 'package:schoolumis/features/superadmin/seeallvi/alllecture.dart';
+import 'package:schoolumis/features/superadmin/seeallvi/allstudent.dart';
 
 import '../features/Lecturer/lectureslogin.dart';
 import '../features/Lecturer/seecourses.dart';
 import '../features/student/acsemester/semester.dart';
+import '../features/superadmin/seeallvi/allworshipcenter.dart';
+import '../features/superadmin/worshipcentrelogin.dart';
+import '../features/worshipquaerte/loginworship.dart';
 
 class Navigationdrawer extends StatelessWidget {
   const Navigationdrawer({Key? key}) : super(key: key);
@@ -67,6 +73,14 @@ class Navigationdrawer extends StatelessWidget {
         },
       ),
       ListTile(
+        leading: Icon(Icons.home_outlined),
+        title: Text('Super admin'),
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => SuperAdminDashboard()));
+        },
+      ),
+      ListTile(
         leading: Icon(Icons.sailing),
         title: Text('Student'),
         onTap: () {
@@ -105,13 +119,108 @@ class Navigationdrawer extends StatelessWidget {
         title: Text('Worship'),
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => Worshipcentre()));
+              builder: (_) => LoginWorship()));
         },
       ),
     ],
   ),);
 
 }
+
+
+
+
+class NavigationdrawerforsuperAdmin extends StatelessWidget {
+  const NavigationdrawerforsuperAdmin({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            buildHeader(context),
+            buildMenuItem(context)
+          ],
+        ),
+      ),
+    );
+
+
+  }
+  Widget buildHeader(BuildContext context) => Container(
+    color: Color.fromARGB(255, 6, 27, 84),
+    padding: EdgeInsets.only(top: 13),
+    child: Column(
+      children: [
+        CircleAvatar(
+          radius: 53,
+          child: Image.asset("image/Rectangle 129.png",
+            height: 30,
+            width: 30,
+            fit: BoxFit.cover,),
+        ),
+        SizedBox(height: 12,),
+        Text("Name", style: TextStyle(fontSize: 18),)
+      ],
+    ),
+
+  );
+
+  Widget buildMenuItem(BuildContext context) => Padding(
+    padding: EdgeInsets.all(15),
+    child: Wrap(
+      runSpacing: 5,
+      children: [
+        ListTile(
+          leading: Icon(Icons.home_outlined),
+          title: Text('Home'),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => SuperAdminDashboard()));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.sailing),
+          title: Text('Student'),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => AllStudent()));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.favorite_outline),
+          title: Text('Lecutrer'),
+          onTap: () {
+            Navigator.pop(context);
+
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => AllLecturer()));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.sailing),
+          title: Text('Halls'),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => AllHalls()));
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.local_library_sharp),
+          title: Text('Worshipcenter '),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => Allworshipr()));
+          },
+        ),
+
+      ],
+    ),);
+
+}
+
 
 
 class Navigationdrawerforstudent extends StatelessWidget {

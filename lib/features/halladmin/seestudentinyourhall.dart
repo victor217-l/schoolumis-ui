@@ -15,6 +15,8 @@ class SeeStudentinyourhall extends StatefulWidget {
 
 class _SeeStudentinyourhallState extends State<SeeStudentinyourhall> {
 
+
+
   final HallService hallService = HallService();
 
   List<StudentInyourHall>? _allstudent;
@@ -72,7 +74,7 @@ class _SeeStudentinyourhallState extends State<SeeStudentinyourhall> {
                 children: [
                   Text("Student in your hall"),
                   SizedBox(height: size.height * 0.03 ,),
-                  CustomButtonfortable(text: "Seng 308",),
+                  CustomButtonfortable(text: "Hall",),
                  Container(
                    height: 300,
                    width: double.infinity,

@@ -52,7 +52,6 @@ class _HallofStudentState extends State<HallofStudent> {
 
     }catch(e){
       showsnackbar(context, e.toString());
-
     }
 
     return _hallstu;
@@ -221,28 +220,6 @@ class _HallofStudentState extends State<HallofStudent> {
 
     }
   }
-
-
-      //rows: fetchallhalls.map((user) =>
-  //
-  // DataRow(
-  // selected: selectedUsers.contains(user),
-  // onSelectChanged: (b){
-  // print("Onselect");
-  // onSelectedRow(b!, user);
-  //
-  // },
-  // cells: [
-  //
-  //     DataCell(Text(user.firstname), onTap: (){
-  //     print('Selected ${user.firstname}');
-  //     }),
-  //    DataCell(Text(user.lastname))
-  //
-  //    ])
-  //
-  // ).toList()m
-
 
 
   @override

@@ -50,49 +50,52 @@ class _LoginWorshipState extends State<LoginWorship> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: Get.height * 0.38,
+                  height: Get.height * 0.87,
                   alignment: Alignment.center,
-                  child: Column(
-                    //mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      greenIntroWidgetWithoutLogos(),
-                      Customtextfiel(controller: _emailController, title: "Email" , iconData: Icons.cabin, hintext: "Email"),
-                      SizedBox(height: 10,),
-                      Passwortextfiell(controller: _passwordController, hintext: "Password", icon: CupertinoIcons.t_bubble,),
-                      SizedBox(height: 10,),
-                      ElevatedButton(
-                        style:ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(12.0))),
-                            minimumSize: Size(
-                                double.infinity, 50),
-                            primary: Globalvariables.primarycolor),
-                        onPressed: () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          if(loginworship.currentState!.validate()){
-                            loginin();
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      //mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        greenIntroWidgetWithoutLogos(),
+                        Customtextfiel(controller: _emailController, title: "Email" , iconData: Icons.cabin, hintext: "Email"),
+                        SizedBox(height: 10,),
+                        Passwortextfiell(controller: _passwordController, hintext: "Password", icon: CupertinoIcons.t_bubble,),
+                        SizedBox(height: 10,),
+                        ElevatedButton(
+                          style:ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(12.0))),
+                              minimumSize: Size(
+                                  double.infinity, 50),
+                              primary: Globalvariables.primarycolor),
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            if(loginworship.currentState!.validate()){
+                              loginin();
 
-                          }
+                            }
 
-                        },
-                        child: (isLoading)
-                            ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 1.5,
-                            ))
-                            : const Text('Login'),
-                      ),
-
-
+                          },
+                          child: (isLoading)
+                              ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 1.5,
+                              ))
+                              : const Text('Login'),
+                        ),
 
 
-                    ],
+
+
+                      ],
+                    ),
                   ),
                 ),
               ],),

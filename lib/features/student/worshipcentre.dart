@@ -7,6 +7,8 @@ import 'package:schoolumis/features/student/courselist.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/globalvariables.dart';
+import 'package:schoolumis/constraint/error_handler.dart';
+import 'package:schoolumis/constraint/utill.dart';
 import '../../common/navigation.dart';
 import 'package:http/http.dart' as http;
 import '../../common/user.dart';
@@ -53,9 +55,48 @@ class _WorshipcentreState extends State<Worshipcentre> {
  late List<Showingchurch> selectedUsers;
 
 
+ Future<void> sendhworshi(String worshipname,String worshipquarter ) async{
+
+
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   final studentto = prefs.getString("studenttoken");
+
+
+   SharedPreferences prefss = await  SharedPreferences.getInstance();
+   final matric_no = prefss.getString("studentmatric_no");
+
+
+
+   http.Response res = await http.post(Uri.parse("https://universitymanagem.onrender.com/student/selectworship"),
+       body: jsonEncode({
+         "matric_no": matric_no,
+         "worshipname": worshipname,
+         "worshipquarter":worshipquarter,
+       }),
+
+       headers: <String,String>{
+         "Content-type": "application/json; charset=UTF-8",
+         "Authorization": "Bearer $studentto"
+       }
+   );
+
+   print(res.body);
+
+   httpErrorHandler(response: res, context: context, onSuccess: () {
+     showsnackbar(context, jsonDecode(res.body)['msg']);
+     Navigator.of(context).push(MaterialPageRoute(builder: (_) => Worshipcentre()));
+   });
+
+ }
+
+
+
 
  void fetchal() async {
    allstu =  await fetchallchurches();
+   setState(() {
+
+   });
  }
 
 
@@ -73,6 +114,7 @@ class _WorshipcentreState extends State<Worshipcentre> {
       if(selected){
         setState(() {
           selectedUsers.add(user);
+          sendhworshi(user.worshipcentrename, user.name);
 
         });
 
@@ -86,40 +128,70 @@ class _WorshipcentreState extends State<Worshipcentre> {
   }
 
   DataTable datebody() {
+    if (allstu == null) {
+      return DataTable(columns: [
+        DataColumn(label: Text('Worshipcentre'),
+            numeric: false,
+            tooltip: "Name of church",
+            onSort: (columnIndex, ascending) {
 
-    return DataTable(columns: [
-      DataColumn(label: Text('Worshipcentre'),
-          numeric: false,
-          tooltip: "Name of church",
-          onSort: (columnIndex, ascending){
+            }
+        ),
+        DataColumn(label: Text('Centre man'),
+            numeric: false,
+            tooltip: "This is firstname"
+        ),
 
-          }
-      ),
-      DataColumn(label: Text('Centre man'),
-          numeric: false,
-          tooltip: "This is firstname"
-      ),
+      ],
+          rows: [
+          DataRow(cells: [
+          DataCell(Center(child: Padding(
+          padding: const EdgeInsets.all(20.0),
+    child: CircularProgressIndicator(color: Globalvariables.colorforstablel,),
+    ),)),
+    DataCell(Center(child: CircularProgressIndicator(color: Globalvariables.primarycolor,),))
+    ]), ]
+      );
+    } else {
+      return DataTable(columns: [
+        DataColumn(label: Text('Worshipcentre'),
+            numeric: false,
+            tooltip: "Name of church",
+            onSort: (columnIndex, ascending){
 
-    ],
-        rows: allstu!.map(
-                (userL)  => DataRow(
-                selected: selectedUsers.contains(userL),
-                onSelectChanged: (b){
-                  print("Onselect");
-                  onSelectedRow(b!, userL);
+            }
+        ),
+        DataColumn(label: Text('Centre man'),
+            numeric: false,
+            tooltip: "This is firstname"
+        ),
 
-                },
-                cells: [
-                  DataCell(Text(userL.worshipcentrename), onTap: (){
-                    print('Selected ${userL.worshipcentrename}');
-                  }),
-                  DataCell(Text(userL.name), onTap: () {
-                    print('Selected ${userL.name}');
-                  })
-                ])
-        ).toList()
-    );
+      ],
+          rows: allstu!.map(
+                  (userL)  => DataRow(
+                  selected: selectedUsers.contains(userL),
+                  onSelectChanged: (b){
+                    print("Onselect");
+                    onSelectedRow(b!, userL);
+
+                  },
+                  cells: [
+                    DataCell(Text(userL.worshipcentrename), onTap: (){
+                      print('Selected ${userL.worshipcentrename}');
+                    }),
+                    DataCell(Text(userL.name), onTap: () {
+                      print('Selected ${userL.name}');
+                    })
+                  ])
+          ).toList()
+      );
+    }
+
+
+
+
   }
+
 
 
   @override

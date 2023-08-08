@@ -83,9 +83,9 @@ class _HallAdminDashboardState extends State<HallAdminDashboard> {
                       ),
                     ),
                   ),
-                  SizedBox(width: size.width * 0.4,),
+                  SizedBox(width: size.height * 0.4,),
                   Text("Check student your in your hall"),
-                  SizedBox(width: size.width * 0.2,) ,
+                  SizedBox(width: size.height * 0.2,) ,
                   InkWell(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(builder: (_) =>SeeStudentinyourhall() ));
@@ -115,31 +115,7 @@ class _HallAdminDashboardState extends State<HallAdminDashboard> {
                     ),
                   ),
                   SizedBox(width: size.width * 0.3,),
-                  Text("Add student your In"),
-                  SizedBox(width: size.width * 0.2,) ,
-                  Container(
-                    height: 80,
-                    width: 320,
-                    decoration: BoxDecoration(
-                      color: Globalvariables.primarycolor,
-                      borderRadius: BorderRadius.all(Radius.circular(24)),
-                    ),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(24),),
-                          child: Image.asset("image/Rectangle 179.png",),
-                        ),
-                        Column(
-                            crossAxisAlignment:CrossAxisAlignment.start,
-                            children: [
-                              Text("Add  student courses",style: TextStyle(color:Colors.black, ))
 
-                            ]
-                        )
-
-                      ],),
-                  )
                 ],
               ),)
           ],

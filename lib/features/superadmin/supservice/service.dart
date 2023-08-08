@@ -36,7 +36,7 @@ class SuperAdminService{
 
           headers: <String,String>{
             "Content-type":"application/json; charset=UTF-8",
-            "Authorization": "Bearer $superto",
+            //"Authorization": "Bearer $superto",
           }
       );
 
@@ -78,7 +78,7 @@ class SuperAdminService{
 
           headers: <String,String>{
             "Content-type":"application/json; charset=UTF-8",
-            "Authorization": "Bearer $superto",
+           // "Authorization": "Bearer $superto",
           }
       );
 
@@ -120,7 +120,7 @@ class SuperAdminService{
 
           headers: <String,String>{
             "Content-type":"application/json; charset=UTF-8",
-            "Authorization": "Bearer $superto",
+           // "Authorization": "Bearer $superto",
           }
       );
 
@@ -153,7 +153,7 @@ class SuperAdminService{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final superto = prefs.getString("");
 
-      http.Response res = await http.post(Uri.parse("https://universitymanagem.onrender.com/superadmin/addhalladmin"),
+      http.Response res = await http.post(Uri.parse("https://universitymanagem.onrender.com/superadmin/worshipcon"),
           body: jsonEncode({
             "worshipinst": worshipinst,
             "email": emailController,
@@ -163,9 +163,13 @@ class SuperAdminService{
 
           headers: <String,String>{
             "Content-type":"application/json; charset=UTF-8",
-            "Authorization": "Bearer $superto",
+            //"Authorization": "Bearer $superto",
           }
       );
+      print(worshipinst);
+      print(emailController);
+      print(password);
+      print(worshipcentername);
 
       print(res.body);
 

@@ -4,6 +4,7 @@ import 'package:schoolumis/features/worshipquaerte/service/servicereg.dart';
 import '../../common/costombotton.dart';
 import '../../common/costomtextfiel.dart';
 import '../../common/globalvariables.dart';
+import '../../common/navigation.dart';
 
 class AddScoreforstudentinChurch extends StatefulWidget {
   final String studentname;
@@ -41,6 +42,41 @@ class _AddScoreforstudentinChurchState extends State<AddScoreforstudentinChurch>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            shadowColor: null,
+            elevation: 0,
+            leading:
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+                child:
+                Image.asset('image/forstart.png',
+                  height: 20, width: 20, fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            actions: [
+              Builder(builder: (BuildContext context){
+                return   IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+
+                  icon: Icon(Icons.menu), color: Colors.black,
+                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip ,
+                );
+              })
+
+            ],
+          ),
+        ),),
+      drawer: Navigationdrawer(),
       body: SingleChildScrollView(
         child: Stack(
           children: [

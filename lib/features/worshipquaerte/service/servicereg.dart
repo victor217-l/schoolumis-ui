@@ -27,13 +27,15 @@ class WorshipCentress {
           }
       );
 
+
+      print(res.body);
       httpErrorHandler(response: res, context: context, onSuccess: () async {
         showsnackbar(context, jsonDecode(res.body)['msg']);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("worhipcentretoken", jsonDecode(res.body)['accessToken']);
         SharedPreferences prefss = await SharedPreferences.getInstance();
-        await prefss.setString("worshipname", jsonDecode(res.body)['worshipname']);
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_)=> WorshipquerterDashbo()), (route) => false);
+        await prefss.setString("worshipname", jsonDecode(res.body)['worshipcentername']);
+        Navigator.of(context).push(MaterialPageRoute(builder: (_)=> WorshipquerterDashbo()));
 
       });
 
@@ -56,7 +58,7 @@ class WorshipCentress {
     List<StudentInyourHall> liststu = [];
 
     try{
-      http.Response res = await http.post(Uri.parse("https://universitymanagem.onrender.com/lecturer/selectforparticularchurch"),
+      http.Response res = await http.post(Uri.parse("https://universitymanagem.onrender.com/worship/selectforparticularchurch"),
           body: jsonEncode({
             "worshipname":worshipname,
           }),
@@ -113,6 +115,7 @@ class WorshipCentress {
 
       httpErrorHandler(response: res, context: context, onSuccess: () async {
         showsnackbar(context, jsonDecode(res.body)['msg']);
+
 
       });
 

@@ -61,7 +61,7 @@ class LectureService{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var lecturertokens = await prefs.getString("lecturertoken");
 
-      http.Response res =  await http.post(Uri.parse("/addlecturecourse"),
+      http.Response res =  await http.post(Uri.parse("https://universitymanagem.onrender.com/lecturer/addlecturecourse"),
         body: jsonEncode({
           "nameofcourse": coursename ,
           "shortname": shortnameofcourse,
@@ -69,11 +69,15 @@ class LectureService{
           "lecturername": lecturername,
         }),
 
+        //  "Content-type": "application/type; charset=UTF-8",
+         // "Authorization": "Bearer $lecturertokens",
         headers: <String,String>{
-        "Content-type":"application/type; charset=UTF-8",
+        "Content-type": "application/json; charset=UTF-8",
           "Authorization": "Bearer $lecturertokens",
         }
       );
+
+      print(coursename); print(shortnameofcourse); print(year); print(lecturername);
 
       httpErrorHandler(response: res, context: context, onSuccess: () async {
         showsnackbar(context, jsonDecode(res.body)['msg']);

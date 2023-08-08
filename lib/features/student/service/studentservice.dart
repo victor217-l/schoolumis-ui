@@ -32,6 +32,10 @@ class StudentService{
         await prefs.setString("studenttoken", jsonDecode(res.body)['accessToken']);
         SharedPreferences prefss = await  SharedPreferences.getInstance();
         await prefss.setString("studentmatric_no", jsonDecode(res.body)['matric_no']);
+        SharedPreferences prefsss = await  SharedPreferences.getInstance();
+        await prefsss.setString("studentlastname", jsonDecode(res.body)['lastname']);
+
+
         Navigator.pushNamedAndRemoveUntil(
             context,
             DashboardStudent.routeName,

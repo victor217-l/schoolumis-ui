@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:schoolumis/features/student/worshipcentre.dart';
 import 'package:schoolumis/features/worshipquaerte/addscoreforcite.dart';
 import 'package:schoolumis/features/worshipquaerte/service/servicereg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/costombotton.dart';
+import '../../common/navigation.dart';
 import '../model/studentinhall.dart';
 
 class AllStudentInAChurch extends StatefulWidget {
@@ -18,12 +20,15 @@ class _AllStudentInAChurchState extends State<AllStudentInAChurch> {
 
   final WorshipCentress worshipCentress = WorshipCentress();
 
-
+  
   List<StudentInyourHall>? _worship ;
 
   void fetchworship() async {
    _worship = await worshipCentress.fetchstudentincourse(context);
-    setState(() {
+   // SharedPreferences prefs = await SharedPreferences.getInstance();
+   // final churchs = prefs.getString(" ")
+
+   setState(() {
 
     });
   }
@@ -39,6 +44,41 @@ class _AllStudentInAChurchState extends State<AllStudentInAChurch> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            shadowColor: null,
+            elevation: 0,
+            leading:
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+                child:
+                Image.asset('image/forstart.png',
+                  height: 20, width: 20, fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            actions: [
+              Builder(builder: (BuildContext context){
+                return   IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+
+                  icon: Icon(Icons.menu), color: Colors.black,
+                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip ,
+                );
+              })
+
+            ],
+          ),
+        ),),
+      drawer: Navigationdrawer(),
       body: SingleChildScrollView(
         child: Stack(
           children: [
@@ -49,7 +89,7 @@ class _AllStudentInAChurchState extends State<AllStudentInAChurch> {
                   SizedBox(height: 10,),
                   Text("List of all student in the church"),
                   SizedBox(height: size.height * 0.02 ,),
-                  CustomButtonfortable(text: "Seng 308",),
+                  CustomButtonfortable(text: "Pioneer",),
                   SizedBox(height: 17,),
                   Container(
                     height: 300,
@@ -57,6 +97,7 @@ class _AllStudentInAChurchState extends State<AllStudentInAChurch> {
                     color: Colors.white,
                     child:    _worship == null ? Center(child: CircularProgressIndicator(),) :
                         ListView.builder(
+                          itemCount: _worship!.length,
                             itemBuilder: (context,index) {
                               final  worship = _worship![index];
                           return Column(

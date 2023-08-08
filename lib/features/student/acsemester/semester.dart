@@ -6,6 +6,7 @@ import 'package:schoolumis/constraint/error_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../common/globalvariables.dart';
+import '../../../common/navigation.dart';
 import '../../../common/user.dart';
 import '../../model/score.dart';
 import 'package:http/http.dart' as http;
@@ -21,16 +22,25 @@ class Semester extends StatefulWidget {
 
 class _SemesterState extends State<Semester> {
 
-  late List<User> users;
-  late List<User> selectedUsers;
+  //late List<Score> users;
+  late List<Score> selectedUsers;
 
   Future<List<Score>> _fetchscore() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var tokenforstudent = await prefs.getString("studenttoken");
 
-    http.Response res = await http.post(Uri.parse(""),
+
+
+    SharedPreferences prefss = await SharedPreferences.getInstance();
+    var studentlastname = await prefss.getString("studentlastname");
+
+
+
+
+
+    http.Response res = await http.post(Uri.parse("https://universitymanagem.onrender.com/student/allstudentscore"),
       body: jsonEncode({
-       // 'studentlastname': studentlastname,
+       'studentname': studentlastname,
       }),
       headers: <String,String>{
         "Content-type":"application/json; charset=UTF-8",
@@ -38,6 +48,7 @@ class _SemesterState extends State<Semester> {
       }
     );
 
+    print(studentlastname);
     print(res.body);
 
    if(res.statusCode == 200){
@@ -46,52 +57,124 @@ class _SemesterState extends State<Semester> {
          .toList();
      return  scorellist;
    }else{
-     throw Exception("No dat");
+     throw Exception("No data");
    }
 
 
 
   }
 
-  Future<List<Score>>? _allscores;
+  List<Score>? _allscores;
 
+  void fetch() async {
+    _allscores = await _fetchscore();
+    setState(() {
+
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
-    users = User.getUsers();
+    //users = User.getUsers();
     selectedUsers = [];
-    _allscores = _fetchscore();
+    fetch();
+
     super.initState();
 
   }
 
+  onSelectedRow(bool selected, Score score) async {
+    setState(() {
+      if(selected){
+        selectedUsers.add(score);
+
+      }else{
+        selectedUsers.remove(score);
+      }
+    });
+  }
+
+
 
   DataTable databody() {
-    return DataTable(
-        columns: [
-          DataColumn(label: Text("All fields"),
-              numeric: false,
-              tooltip: "All fields",
-              onSort: (columnIndex, ascending){
+    if(_allscores == null){
+      return DataTable(
+          columns: [
+            DataColumn(label: Text("Student"),
+                numeric: false,
+                tooltip: "All fields",
+                onSort: (columnIndex, ascending){
 
-              }
-          ),
-          DataColumn(label: Text("Your "),
-              numeric: false,
-              tooltip: "All fields",
-              onSort: (columnIndex, ascending){
+                }
+            ),
+            DataColumn(label: Text("Course "),
+                numeric: false,
+                tooltip: "All fields",
+                onSort: (columnIndex, ascending){
 
-              }
-          ),
+                }
+            ),
+            DataColumn(label: Text("Score "),
+                numeric: false,
+                tooltip: "All fields",
+                onSort: (columnIndex, ascending){
 
-        ],
-        rows: users.map((user) => DataRow(cells: [
+                }
+            ),
 
-          DataCell(Text(user.firstname)),
-          DataCell(Text(user.firstname))
+          ],
+          rows: [ DataRow(
 
-        ])).toList());
+              cells: [
+
+                DataCell(Center(child: CircularProgressIndicator(),)),
+                DataCell(Center(child: CircularProgressIndicator(),)),
+                DataCell(Center(child: CircularProgressIndicator(),)),
+              ]) ]
+      );
+
+
+    }else{
+      return DataTable(
+          columns: [
+            DataColumn(label: Text("Coursename "),
+                numeric: false,
+                tooltip: "All fields",
+                onSort: (columnIndex, ascending){
+
+                }
+            ),
+            DataColumn(label: Text("Score "),
+                numeric: false,
+                tooltip: "All fields",
+                onSort: (columnIndex, ascending){
+
+                }
+            ),
+
+          ],
+          rows: _allscores!.map((allcoure) => DataRow(
+              selected: selectedUsers.contains(allcoure),
+              onSelectChanged: (b){
+                print("Onselect");
+                onSelectedRow(b!, allcoure);
+
+              },
+              cells: [
+
+
+                DataCell(Text(allcoure.coursename), onTap: () {
+                  print('Selected ${allcoure.coursename}');
+                }),
+                DataCell(Text(" ${allcoure.score}  "), onTap: (){
+                  print('Selected ${allcoure.score}');
+                })
+
+              ])).toList());
+
+
+    }
 
   }
 
@@ -100,6 +183,41 @@ class _SemesterState extends State<Semester> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            shadowColor: null,
+            elevation: 0,
+            leading:
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+                child:
+                Image.asset('image/forstart.png',
+                  height: 20, width: 20, fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            actions: [
+              Builder(builder: (BuildContext context){
+                return   IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+
+                  icon: Icon(Icons.menu), color: Colors.black,
+                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip ,
+                );
+              })
+
+            ],
+          ),
+        ),),
+      drawer: Navigationdrawer(),
       body: SingleChildScrollView(
         child: Stack(
           children: [
@@ -162,22 +280,7 @@ class _SemesterState extends State<Semester> {
                         child: databody(),
                       ),
                       SizedBox(height: 12,),
-                      InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>  HallofStudent() ));
-                        },
-                        child: Container(
-                          height: 40,
-                          width: 210,
-                          decoration: BoxDecoration(
-                              color: Globalvariables.primarycolor,
-                              borderRadius: BorderRadius.all(Radius.circular(12))
-                          ),
-                          child: Center(
-                            child: Text("Submit Registration",style: TextStyle(color: Colors.white, ),),
-                          ),
-                        ),
-                      )
+
                     ],
                   ),
                 )
@@ -185,15 +288,11 @@ class _SemesterState extends State<Semester> {
               ],
             ),
             SizedBox(height: size.height * 0.90,),
-            Positioned(
-                left: 0,
-                bottom: 7,
-                child: Image.asset('image/bmeal.png', height: 170, width: 100,)),
+            // Positioned(
+            //     left: 2,
+            //     bottom: 7,
+            //     child: Image.asset('image/stissclipart.png', height: 170, width: 100,)),
 
-            Positioned(
-                right: 0,
-                bottom: 20,
-                child: Image.asset("image/forstumeal.png", height: 50, width: 50,))
 
           ],
         ),

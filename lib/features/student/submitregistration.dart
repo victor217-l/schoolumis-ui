@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:schoolumis/constraint/error_handler.dart';
+import 'package:schoolumis/constraint/utill.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/globalvariables.dart';
 import '../../common/navigation.dart';
 import '../../common/user.dart';
 import 'commenceregistration.dart';
+import 'package:http/http.dart' as http;
 import 'hallresidence.dart';
 
 class SubmitRegistration extends StatefulWidget {
@@ -17,7 +23,34 @@ class _SubmitRegistrationState extends State<SubmitRegistration> {
   
   late List<User> users;
   late List<User> selectedUsers;
-  
+
+  Future<void> submitregistraion() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final studentto = prefs.getString("studenttoken");
+
+    SharedPreferences prefss = await  SharedPreferences.getInstance();
+    final matric_no = prefss.getString("studentmatric_no");
+
+
+
+
+    http.Response res = await http.post(Uri.parse(
+        "https://universitymanagem.onrender.com/student/toregister"),
+        body: jsonEncode({
+          "matric_no":matric_no,
+        }),
+        headers: <String, String>{
+          "Content-type": "application/json; charset=UTF-8",
+          "Authorization": "Bearer $studentto"
+        }
+    );
+
+    httpErrorHandler(response: res, context: context, onSuccess: () {
+      showsnackbar(context, jsonDecode(res.body)['msg']);
+    });
+
+
+  }
   
   @override
   void initState() {
@@ -122,28 +155,28 @@ class _SubmitRegistrationState extends State<SubmitRegistration> {
                 Padding(padding: EdgeInsets.all(13),
                   child: Column(
                     children: [
-                      Container(
-                        height: 40,
-                        width: 320,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Globalvariables.primarycolor
-                        ),
-                        child: Center(
-                          child: Text(
-                            "List of Meals",
-                            style: TextStyle(color: Colors.white,
-                                fontWeight: FontWeight.w400, fontSize: 15),
-                          ) ,
-                        ),
-                      ),
-                      Center(
-                        child: databody(),
-                      ),
+                      // Container(
+                      //   height: 40,
+                      //   width: 320,
+                      //   decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.all(Radius.circular(10)),
+                      //       color: Globalvariables.primarycolor
+                      //   ),
+                      //   child: Center(
+                      //     child: Text(
+                      //       "List of Meals",
+                      //       style: TextStyle(color: Colors.white,
+                      //           fontWeight: FontWeight.w400, fontSize: 15),
+                      //     ) ,
+                      //   ),
+                      // ),
+                      // Center(
+                      //   child: databody(),
+                      // ),
                       SizedBox(height: 12,),
                       InkWell(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_)=>  HallofStudent() ));
+                          submitregistraion();
                         },
                         child: Container(
                           height: 40,

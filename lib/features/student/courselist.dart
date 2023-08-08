@@ -1,11 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:schoolumis/features/model/studentm.dart';
 import 'package:schoolumis/features/student/selectedcourses.dart';
+import 'package:schoolumis/features/student/submitregistration.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/globalvariables.dart';
 import '../../common/navigation.dart';
 import '../../common/user.dart';
+import '../../constraint/error_handler.dart';
+import '../../constraint/utill.dart';
 import 'commenceregistration.dart';
+import 'package:http/http.dart' as http;
 import 'hallresidence.dart';
+import 'modelsforstudent/modelsforcourse.dart';
 
 class Courselist extends StatefulWidget {
   const Courselist({Key? key}) : super(key: key);
@@ -16,59 +25,204 @@ class Courselist extends StatefulWidget {
 
 class _CourselistState extends State<Courselist> {
 
- late List<User> users;
-  late List<User> selectedUsers;
 
 
-  @override
+
+ Future<List<Course>> fetccourses() async {
+   SharedPreferences prefss = await SharedPreferences.getInstance();
+   final studentto = prefss.getString("studenttoken");
+
+   List<Course> _allcourse = [];
+
+   try {
+
+     http.Response res = await http.get(Uri.parse(
+         "https://universitymanagem.onrender.com/student/allcourses"),
+         headers: <String, String>{
+           "Content-type": "application/json; charset=UTF-8",
+           "Authorization": "Bearer $studentto"
+         }
+     );
+
+     print(res.body);
+
+
+     httpErrorHandler(response: res, context: context, onSuccess: () {
+       for (int i = 0; i < jsonDecode(res.body)['list'].length; i++) {
+         _allcourse.add(
+             Course.fromJson(jsonEncode(jsonDecode(res.body)['list'][i])));
+       }
+     });
+   } catch (e) {
+     showsnackbar(context, e.toString());
+   }
+
+   return _allcourse;
+ }
+
+
+ Future<void> sendcoures(String coursename,String shortname, String  year ,String lecturename, ) async{
+
+
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   final studentto = prefs.getString("studenttoken");
+
+
+   SharedPreferences prefss = await  SharedPreferences.getInstance();
+   final matric_no = prefss.getString("studentmatric_no");
+
+
+
+   http.Response res = await http.post(Uri.parse("https://universitymanagem.onrender.com/student/addcoursesforstudent"),
+       body: jsonEncode({
+         "matric_no": matric_no,
+         "coursename": coursename,
+         "shortname":shortname,
+         "lecturername": lecturename,
+         "year":year,
+         "credit": "3",
+       }),
+
+       headers: <String,String>{
+         "Content-type": "application/json; charset=UTF-8",
+         "Authorization": "Bearer $studentto"
+       }
+   );
+
+   print(res.body);
+
+   httpErrorHandler(response: res, context: context, onSuccess: () {
+     showsnackbar(context, jsonDecode(res.body)['msg']);
+     Navigator.of(context).push(MaterialPageRoute(builder: (_) => SubmitRegistration()));
+   });
+
+ }
+
+
+ List<Course>? _allsocours;
+ late List<Course> selectedUsers;
+
+ void fetchrm() async {
+   _allsocours = await fetccourses();
+   setState(() {
+
+   });
+
+ }
+
+
+ @override
   void initState() {
-    users = User.getUsers();
+   fetchrm();
     // TODO: implement initState
     selectedUsers = [];
     super.initState();
   }
 
-  onSelectedRow(bool selected, User user) async {
+  onSelectedRow(bool selected, Course course) async {
     setState(() {
       if(selected){
-        selectedUsers.add(user);
+        selectedUsers.add(course);
+        sendcoures(course.nameofcourse,course.shortname,course.year,course.lecturername);
       }else{
-        selectedUsers.add(user);
+        selectedUsers.remove(course);
       }
     });
   }
 
   DataTable datebody() {
-    return DataTable(columns: [
-      DataColumn(label: Text('First name'),
-          numeric: false,
-          tooltip: "This is firstname",
-          onSort: (columnIndex, ascending){
+   if(_allsocours == null){
+     return DataTable(columns: [
+     DataColumn(label: Text('Nameofcourse'),
+    numeric: false,
+    tooltip: "This is firstname",
+    onSort: (columnIndex, ascending) {
 
-          }
-      ),
-      DataColumn(label: Text('First name'),
-          numeric: false,
-          tooltip: "This is firstname"
-      ),
+    }
+    ),
+    DataColumn(label: Text('Shortname'),
+    numeric: false,
+    tooltip: "This is firstname",
+    onSort: (columnIndex, ascending) {
 
+    }
+    ),
+    DataColumn(label: Text('year'),
+    numeric: false,
+    tooltip: "This is firstname",
+    onSort: (columnIndex, ascending) {
+
+    }
+    ),
+    DataColumn(label: Text('Lecurername'),
+    numeric: false,
+    tooltip: "This is firstname"
+    ),
+
+    ], rows: [
+      DataRow(cells: [
+        DataCell(Center(child: CircularProgressIndicator(),)),
+        DataCell(Center(child: CircularProgressIndicator(),)),
+        DataCell(Center(child: CircularProgressIndicator(),)),
+        DataCell(Center(child: CircularProgressIndicator(),)),
+      ])
     ],
-        rows: users.map(
-                (user)  => DataRow(
-                selected: selectedUsers.contains(user),
-                onSelectChanged: (b){
-                  print("Onselect");
-                  onSelectedRow(b!, user);
+     );
 
-                },
-                cells: [
-                  DataCell(Text(user.firstname), onTap: (){
-                    print('Selected ${user.firstname}');
-                  }),
-                  DataCell(Text(user.lastname))
-                ])
-        ).toList()
-    );
+   }else {
+     return DataTable(columns: [
+       DataColumn(label: Text('Nameofcourse'),
+           numeric: false,
+           tooltip: "This is firstname",
+           onSort: (columnIndex, ascending) {
+
+           }
+       ),
+       DataColumn(label: Text('Shortname'),
+           numeric: false,
+           tooltip: "This is firstname",
+           onSort: (columnIndex, ascending) {
+
+           }
+       ),
+       DataColumn(label: Text('year'),
+           numeric: false,
+           tooltip: "This is firstname",
+           onSort: (columnIndex, ascending) {
+
+           }
+       ),
+       DataColumn(label: Text('Lecurer name'),
+           numeric: false,
+           tooltip: "This is firstname"
+       ),
+
+     ],
+         rows: _allsocours!.map(
+                 (cours) =>
+                 DataRow(
+                     selected: selectedUsers.contains(cours),
+                     onSelectChanged: (b) {
+                       print("Onselect");
+                       onSelectedRow(b!, cours);
+                     },
+                     cells: [
+                       DataCell(Text(cours.nameofcourse), onTap: () {
+                         print('Selected ${cours.nameofcourse}');
+                       }),
+                       DataCell(Text(cours.shortname), onTap: () {
+                         print('Selected ${cours.shortname}');
+                       }),
+                       DataCell(Text(cours.year), onTap: () {
+                         print('Selected ${cours.year}');
+                       }),
+                       DataCell(Text(cours.lecturername), onTap: () {
+                         print('Selected ${cours.lecturername}');
+                       })
+                     ])
+         ).toList()
+     );
+   }
   }
 
 

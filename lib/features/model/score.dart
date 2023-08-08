@@ -4,7 +4,7 @@ class Score{
   final String id;
   final String coursename;
   final String studentlastname;
-  final String score;
+  final int score;
 
   Score({
     required this.id,

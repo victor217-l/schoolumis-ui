@@ -38,7 +38,7 @@ class _AddcoursesState extends State<Addcourses> {
     lectureService.AddCourse(context: context,
         coursename: _nameofcourse.text,
         shortnameofcourse: _shortname.text ,
-        year: _yearname.text,
+        year:  _yearname.text  ,
         lecturername: _lecturername.text);
   }
 
@@ -91,7 +91,7 @@ class _AddcoursesState extends State<Addcourses> {
                 child: Column(
                   children: [
                     Customtextfiel(controller: _nameofcourse , title: "Coursename", iconData: Icons.leaderboard_outlined,
-                        hintext: "Coursename"),
+                        hintext: "Coursenam"),
                     SizedBox(height: 10,),
                     Customtextfiel(controller: _shortname, title: "Shortname of course", iconData: Icons.swipe_left_alt_rounded,
                         hintext: "Shortname of course"),
